@@ -15,6 +15,11 @@ Channel link: [Join the Telegram channel](https://t.me/+uNY3knlZy0NkODc1)
 This project is notification-only.
 It does not perform ticket sniping, seat holding, account automation, checkout automation, or any auto-purchase flow.
 
+## Usage Limitation
+
+This project is for personal notification use only (non-commercial use).
+Commercial use, resale, redistribution of scraped content, or any use that violates the target website's terms is not intended.
+
 This project has been verified to run on AWS Lambda (Container Image) and successfully scrape available dates from the Vivaticket page.
 
 > Playwright on Lambda must be deployed as a container (`PackageType: Image`), not as a zip package.
