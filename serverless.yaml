@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: The Last Supper Ticket Scraper Lambda Function
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 512
+    Environment:
+      Variables:
+        DOTNET_ROOT: /var/runtime
+
+Parameters:
+  FunctionName:
+    Type: String
+    Default: the-last-supper-ticket
+  StateTableName:
+    Type: String
+    Default: the-last-supper-ticket-state
+  ImageRepositoryName:
+    Type: String
+    Default: thelastsupperticket
+  ImageTag:
+    Type: String
+    Default: latest
+  ScheduleExpression:
+    Type: String
+    Default: cron(0/10 * * * ? *)
+
+Resources:
+  TicketScraperFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Ref FunctionName
+      PackageType: Image
+      Architectures:
+        - x86_64
+      ImageUri: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ImageRepositoryName}:${ImageTag}'
+      MemorySize: 1024
+      Timeout: 120
+      Environment:
+        Variables:
+          DYNAMODB_STATE_TABLE: !Ref TicketStateTable
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${FunctionName}*'
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+              Resource: !GetAtt TicketStateTable.Arn
+      Events:
+        ScheduledEvent:
+          Type: Schedule
+          Properties:
+            Schedule: !Ref ScheduleExpression
+        ManualTriggerEvent:
+          Type: CloudWatchEvent
+          Properties:
+            Pattern:
+              source:
+                - thelastsupperticket.manual
+              detail-type:
+                - RunNow
+
+  TicketStateTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref StateTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: StateKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: StateKey
+          KeyType: HASH
+
+Outputs:
+  TheLastSupperTicketFunctionArn:
+    Description: ARN of the The Last Supper Ticket Scraper Lambda Function
+    Value: !GetAtt TicketScraperFunction.Arn
+  TheLastSupperTicketFunctionName:
+    Description: Name of the The Last Supper Ticket Scraper Lambda Function
+    Value: !Ref TicketScraperFunction

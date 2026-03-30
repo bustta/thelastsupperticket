@@ -1,0 +1,12 @@
+bin/
+obj/
+.git/
+.gitignore
+.vscode/
+.vs/
+snapshots/
+lambda-response.json
+*.md
+*.log
+*.tmp
+.env

@@ -1,0 +1,12 @@
+{
+  "profile": "default",
+  "region": "ap-northeast-1",
+  "configuration": "Release",
+  "s3-bucket": "thelastsupperticket-lambda-deployment",
+  "s3-prefix": "ticketscraper/",
+  "template": "serverless.template",
+  "template-parameters": "ParameterKey1=ParameterValue1;ParameterKey2=ParameterValue2",
+  "stack-name": "TheLastSupperTicket-Stack",
+  "capabilities": "CAPABILITY_IAM",
+  "parameter-overrides": ""
+}
