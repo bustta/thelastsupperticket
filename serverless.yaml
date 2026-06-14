@@ -25,7 +25,7 @@ Parameters:
     Default: latest
   ScheduleExpression:
     Type: String
-    Default: cron(0/10 * * * ? *)
+    Default: cron(0/30 * * * ? *)
 
 Resources:
   TicketScraperFunction:
